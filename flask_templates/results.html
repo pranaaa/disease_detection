@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content />
+        <meta name="author" content="Pranathi Prabhala" />
+        <title>HealthInspect</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="/static/assets/icon.png" />
+        <!-- Custom Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/static/css/styles.css" rel="stylesheet" />
+    </head>
+    <body class="d-flex flex-column h-100 bg-light">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-success py-3">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="index.html"><span class="fw-bolder text-primary">HealthInspect</span></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="product.html">Product</a></li>
+                            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Page content-->
+            <div class="main-2">
+            <section class="py-5">
+                <div class="container px-5 my-5">
+                    <div class="text-center mb-5">
+                        <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Results</span></h1>
+                    </div>
+                    <!--USE THESE DIVS FOR RESULTS-->
+                    <div class="container my-4">
+                        <label for="languageSelect" class="fw-bold">Select Language:</label>
+                        <select id="languageSelect" class="form-select w-auto">
+                            <option value="en">English</option>
+                            <option value="es">Kannada</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    <section>
+                        <div class="card shadow border-0 rounded-4 mb-5">
+                            <div class="card-body p-5">
+                                <div class="mb-5 ">
+                                    <div class="mb-4">
+                                        <p><h3 class="fw-bolder mb-0" id="name"></h3><br></p>
+                                        <p><h3 class="fw-bold mb-0" id="confidence"> Confidence Rating: {{100 * confidence}}%</h3></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow border-0 rounded-4 mb-5">
+                            <div class="card-body p-5">
+                                <div class="mb-5 ">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <h3 class="fw-bolder mb-0"><span class="d-inline" id="symptoms"></span></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow border-0 rounded-4 mb-5">
+                            <div class="card-body p-5">
+                                <div class="mb-5 ">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <h3 class="fw-bolder mb-0"><span class="d-inline" id="causes"></span></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow border-0 rounded-4 mb-5">
+                            <div class="card-body p-5">
+                                <div class="mb-5 ">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <h3 class="fw-bolder mb-0"><span class="d-inline" id="treatments"></span></h3>
+                                    </div>
+                                </div>
+                                <div class="fw-semibold text-danger"><h4>Remember to always consult a doctor before starting any medication<h4></h4></div>
+                            </div>
+                        </div>
+
+                    </section> 
+
+                    <!--dont use this div-->
+                    <h1 style="display:none;" id="disease">{{disease}}</h1>
+                    <script>
+                    
+                        setInterval(function(){
+                            var dname=document.getElementById("disease").textContent;
+                            var lname=document.getElementById("languageSelect").value;
+                            setTimeout(function(){console.log(1)},100);
+                            setInterval(lookupDiseaseInfo(dname, lname), 1);
+                        })
+                    </script>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script>
+        document.getElementById("languageSelect").addEventListener("change", function() {
+        let selectedLanguage = this.value;
+        console.log("Selected language:", selectedLanguage);
+        // You can now use this value to update the page content accordingly
+    });
+        const diseases = {
+            Acne_and_Rosacea: {
+                name:'Acne or Rosacea',
+                symptoms:'<br>-Facial redness <br>-Flushing <br>-Burning sensation <br>-Dryness and irritation in the eye', 
+                causes:'<br>No direct cause has been found, but research has pointed towards the most probable cause being that it is hereditary. A few triggers which make it worse are:<br>-Sunlight <br>-Stress <br>-Hot or Spicy food or drinks <br>-Alcohol and Caffeine<br>', 
+                treatments:'<br>Apply to skin: Azelaic acid, Metronidazole <br>Medicines to take: Doxycycline, Minocycline, Erythromycin' 
+            },
+            Actinic_Keratosis_Basal_Cell_Carcinoma_and_other_Malignant_Lesions: {
+                name:'Actinic Keratosis or other Malignant Lesions',
+                symptoms:'<br>-Rough, scaly or crusty patches of skin <br>-Slight bumps on skin <br>-Colour variations <br>-pink or brown <br>-Itching, burning, bleeding or oozing', 
+                causes:'<br>-Exposure to chemicals or radiation <br>-Weak Immune System <br>-Heredity', 
+                treatments:'<br>Apply to skin: 5-fluorouracil(5-FU) cream, Imiquimod' 
+            },
+            Atopic_Dermatitis: {
+                name:'Atopic Dermatitis',
+                symptoms:'<br>-Dry, itchy and scaly skin <br>-Redness and inflammation <br>-Rough and thick patches of skin', 
+                causes:'<br>-Allergen exposure or food allergies <br>-Reaction of skin to certain materials <br>-Hormonal changes', 
+                treatments:'<br>Moisturizing skin regularly <br>Apply to skin: Corticosteroids like Prednisone, Hydrocortisone <br>Medicines to take: Antihistamines like Cetirizine, Diphenhydramine' 
+            },
+            Bullous_Disease: {
+                name:'Bullous Disease',
+                symptoms:'<br>-Fluid blisters on skin <br>-Redness and inflammation <br>-Open sores, thickened, scaly or crusty skin', 
+                causes:'<br>-Autoimmune disorders <br>-Infections <br>-Reaction to medication <br>-Genetic factors', 
+                treatments:'<br>Apply to skin: Corticosteroids like Prednisone, Hydrocortisone <br>Medicines to take: Immunosuppressants like Azathioprine, Methotrexate' 
+            },
+            Eczema: {
+                name:'Eczema',
+                symptoms:'<br>-Dry, itchy and scaly skin <br>-Redness and inflammation <br>-Rough and thick patches of skin', 
+                causes:'<br>-Allergen exposure or food allergies <br>-Reaction of skin to certain materials <br>-Hormonal changes', 
+                treatments:'<br>Apply to skin: Eczema friendly moisturisers, petroleum jelly, relief creams' 
+            },
+            Hair_Loss_Alopecia_and_other_Hair_Diseases: {
+                name:'Hair Loss Alopecia or other Hair Diseases',
+                symptoms:'<br>-Hair loss <br>-Change in nail appearance	', 
+                causes:'<br>-Autoimmune or hormonal disorders <br>-Genetics <br>-Side effect to medication', 
+                treatments:'<br>Apply to skin: Minoxidil(scalp), Corticosteroids like Prednisone, Hydrocortisone <br>Medicines to take, only for males: Finasteride' 
+            },
+            Herpes_HPV_and_other_STDs: {
+                name:'Herpes or other STDs',
+                symptoms:'<br>-Small blisters <br>-Pain during urine discharge <br>-Itching and burning', 
+                causes:'<br>-Sexual contact with afflicted individual <br>-Stress, illness or fever can trigger it', 
+                treatments:'<br>Apply to skin: Antiviral creams or ointments <br>Medicines to take: Acyclovir, Famciclovir, Valacyclovir' 
+            },
+            Light_Diseases_and_Disorders_of_Pigmentation: {
+                name:'Light Diseases or Disorders of Pigmentation',
+                symptoms:'<br>-Changes in skin colour <br>-Spots or patches <br>-Uneven skin tone', 
+                causes:'<br>-Genetics or underlying medical conditions <br>-Sun exposure <br>-Hormonal changes <br>-Side effect of medications', 
+                treatments:'<br>Apply to skin: Corticosteroids, Hydroquinone, Retinoids <br>Chemical peels can be used to exfoliate the top layer and reduce pigmentation' 
+            },
+            Lupus_and_other_Connective_Tissue_diseases: {
+                name:'Lupus or other Connective Tissue diseases',
+                symptoms:'<br>-Fever, fatigue and weakness <br>-Rashes and inflammation <br>-Nausea and vomiting', 
+                causes:'<br>-Genetics <br>-Hormonal changes', 
+                treatments:'<br>Apply to skin: Tacrolimus ointment <br>Medicine to take: <br>\t-Anti-inflammatory drugs like Aspirin, Ibuprofen <br>\t-Corticosteroids like Prednisone, Hydrocortisone <br>\t-Immunosuppressants like Azathioprine, Cyclophosphamide <br>\t-Biologics' 
+            },
+            Melanoma_Skin_Cancer_Nevi_and_Moles: {
+                name:'Melanoma, Nevi or Moles',
+                symptoms:'<br>-New unusual growth on skin <br>-Change in appearance of an existing mole <br>-A sore that does not heal', 
+                causes:'<br>Exact cause is not known, but exposure to radiation is a risk factor', 
+                treatments:'<br>Potentially skin cancer, kindly go to the nearest dermatologist as soon as possible'  
+            },
+            Nail_Fungus_and_other_Nail_Disease: {
+                name:'Nail Fungus or other Nail Disease',
+                symptoms:'<br>-Thickened, discoloured or brittle nails <br>-Yellow, brown or white discolouration <br>-Foul odour emanating from nail <br>-Pain and discomfort	', 
+                causes:'<br>-Contact with afflicted individuals <br>-Poor hygiene', 
+                treatments:'<br>Apply to skin: Ciclopirox, Amorolfine <br>Medicines to take: Itraconazole, Terbinafine' 
+            },
+            Poison_Ivy_and_other_Contact_Dermatitis: {
+                name:'Contact Dermatitis',
+                symptoms:'<br>Can be varying and usually include: <br>-Itchy rash <br>-Leathery patches that are darker than usual (hyperpigmented) <br>-Dry, cracked, scaly skin <br>-Bumps and blisters, sometimes with oozing and crusting <br>-Swelling, burning or tenderness', 
+                causes:'<br>Direct contact with a substance or an allergic reaction to it <br>-Many substances, such as cosmetics, fragrances, jewelry and plants', 
+                treatments:'<br>Apply to skin: topical steroids- clobetasol 0.05% or triamcinolone 0.1%<br>-Medicines to take: Oral corticosteroids,Anitihistamines, Immunosuppressant drugs'  
+            },
+            Psoriasis_Lichen_Planus_and_related_diseases: {
+                name:'Psoriasis Lichen Planus or related diseases',
+                symptoms:'<br>-Itching, dryness, flaky skin <br>-Redness, swelling and burning sensation', 
+                causes:'<br>-Contact with irritant <br>-Contact with allergen', 
+                treatments:'<br>Apply to skin: Cold Compresses, Calamine <br>Medicines to take: Antihistamines like Cetirizine, Diphenhydramine'  
+            },
+            Scabies_Lyme_Disease_and_other_Infestations_and_Bites: {
+                name:'Scabies Lyme Disease or other Infestations or Bites',
+                symptoms:'<br>-Itching and rashes', 
+                causes:'<br>-Contact with afflicted individual', 
+                treatments:'<br>If Scabies <br>Apply to skin: Permethrin cream <br>Medicines to take: Ivermectin <br>If Lyme Disease <br>Medicines to take: Doxycycline, Amoxicillin' 
+            },
+            Seborrheic_Keratoses_and_other_Benign_Tumors: {
+                name:'Seborrheic Keratoses or other Benign Tumors',
+                symptoms:'<br>-Wart-like growths <br>-May cause itching and irritation', 
+                causes:'<br>-Genetics <br>-Exposure to sun <br>-Hornmonal Changes', 
+                treatments:'<br>It is usually harmless and does not require treatment, but contact dermatologist if causing troubles'  
+            },
+            Systemic_Disease: {
+                name:'Systemic Disease',
+                symptoms:'<br>Symptoms vary from disease to disease', 
+                causes:'<br>Causes vary based on disease', 
+                treatments:'<br>Variety of Diseases, go to the nearest dermatologist for an expert opinion'  
+            },
+            Tinea_Ringworm_Candidiasis_and_other_Fungal_Infections: {
+                name:'Tinea Ringworm Coridiasis or other Fungal Infections',
+                symptoms:'<br>-Itching, burning and cracking <br>-Discolouration', 
+                causes:'<br>-Weakened immune system <br>-Exposure to excessive fungi', 
+                treatments:'<br>Apply to skin: Clotrimazole, Miconazole, Ketoconazole <br>Medicines to take: <br>\t-Terbinafine, Fluconazole <br>\t-Antifungal products should be used as well <br>Do visit a dermatologist for an expert opinion'  
+            },
+            Urticaria_Hives: {
+                name:'Urticaria Hives',
+                symptoms:'<br>-Itchy red bumps on skin <br>-Burning or stinging sensation <br>-Warm skin', 
+                causes:'<br>-Allergic reaction to foods, medications or other substances n\-Temperature changes <br>-Sunlight exposure', 
+                treatments:'<br>Apply to skin: Calamine <br>Medicines to take: Antihistamines like Cetirizine, Diphenhydramine' 
+            },
+            Vascular_Tumors: {
+                name:'Vascular Tumors',
+                symptoms:'<br>-Swelling or lumps in affected area <br>-Redness or discolouration in affected area <br>-Bleeding or ulceration', 
+                causes:'<br>-Genetic mutations <br>-Abnormal blood vessel development <br>-Exposure to certain chemicals or radiation', 
+                treatments:'<br>Possible Remedies here depend on the type, size and location of the tumor.<br>Visit the nearest dermatologist for an expert opinion'
+            },
+            Vasculitis: {
+                name:'Vasculitis',
+                symptoms:'<br>-Fever and fatigue <br>-Weight loss <br>-Rashes <br>-Vision change <br>-Abdominal pain', 
+                causes:'<br>Probable cause is abnormal immune system response	', 
+                treatments:'<br>Medicines to take: <br>-Colchicine, Corticosteroids like Prednisone, Hydrocortisone <br>-Immunosuppressants like Azathioprine, Cyclophosphamide <br>-Biologic agents like rituximab, tocilizumab' 
+            },
+            Warts_Molluscum_and_other_Viral_Infections: {
+                name:'Warts Molluscum or other Viral Infections',
+                symptoms:'<br>-Small, fleshy, grainy bumps <br>-Skin becomes rough to touch <br>-Black dots on skin', 
+                causes:'<br>-Infection with human papilloma virus(HPV) <br>-Contact spreading', 
+                treatments:'<br>Apply to skin: Salicyclic acid, Cantharidin, Imiquimod' 
+            }
+};
+
+const diseases_kannada = {
+Acne_and_Rosacea: {
+                ಹೆಸರು: 'ಮೊಡವೆ ಅಥವಾ ರೋಸೇಸಿಯಾ',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಮುಖ ಕೆಂಪಾಗುವಿಕೆ <br>-ಫ್ಲಶಿಂಗ್ <br>-ಸುಡುವ ಸಂವೇದನೆ <br>-ಶುಷ್ಕತೆ ಮತ್ತು ಕಣ್ಣಿನಲ್ಲಿ ಕಿರಿಕಿರಿ', 
+                ಕಾರಣಗಳು: '<br>ಯಾವುದೇ ನೇರ ಕಾರಣವನ್ನು ಕಂಡುಹಿಡಿಯಲಾಗಿಲ್ಲ, ಆದರೆ ಸಂಶೋಧನೆಯು ಇದು ಆನುವಂಶಿಕವಾಗಿದೆ ಎಂಬುದು ಅತ್ಯಂತ ಸಂಭವನೀಯ ಕಾರಣವನ್ನು ಸೂಚಿಸಿದೆ. ಇದನ್ನು ಇನ್ನಷ್ಟು ಹದಗೆಡಿಸುವ ಕೆಲವು ಪ್ರಚೋದಕಗಳೆಂದರೆ: <br>-ಸೂರ್ಯನ ಬೆಳಕು <br>-ಒತ್ತಡ <br>- ಬಿಸಿ ಅಥವಾ ಮಸಾಲೆಯುಕ್ತ ಆಹಾರ ಅಥವಾ ಪಾನೀಯಗಳು <br>- ಆಲ್ಕೋಹಾಲ್ ಮತ್ತು ಕೆಫೀನ್<br>', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಅಜೆಲೈಕ್ ಆಮ್ಲ, ಮೆಟ್ರೋನಿಡಾಜೋಲ್ <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಡಾಕ್ಸಿಸೈಕ್ಲಿನ್, ಮಿನೋಸೈಕ್ಲಿನ್, ಎರಿಥ್ರೊಮೈಸಿನ್' 
+            },
+            Actinic_Keratosis_Basal_Cell_Carcinoma_and_other_Malignant_Lesions: {
+                ಹೆಸರು: 'ಆಕ್ಟಿನಿಕ್ ಕೆರಾಟೋಸಿಸ್ ಅಥವಾ ಇತರ ಮಾರಕ ಗಾಯಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಚರ್ಮದ ಒರಟು, ಸ್ಕೇಲ್ ಅಥವಾ ಕ್ರಸ್ಟಿ ತೇಪೆಗಳು <br>-ಚರ್ಮದ ಮೇಲೆ ಸಣ್ಣ ಉಬ್ಬುಗಳು <br>-ಬಣ್ಣದ ವ್ಯತ್ಯಾಸಗಳು <br>-ಗುಲಾಬಿ ಅಥವಾ ಕಂದು <br>- ತುರಿಕೆ, ಸುಡುವಿಕೆ, ರಕ್ತಸ್ರಾವ ಅಥವಾ ಸೋರುವಿಕೆ', 
+                ಕಾರಣಗಳು: '<br>-ರಾಸಾಯನಿಕಗಳು ಅಥವಾ ವಿಕಿರಣಕ್ಕೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು <br>-ದುರ್ಬಲ ಪ್ರತಿರಕ್ಷಣಾ ವ್ಯವಸ್ಥೆ <br>-ಆನುವಂಶಿಕತೆ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: 5-ಫ್ಲೋರೊರಾಸಿಲ್ (5-ಎಫ್ ಯು) ಕ್ರೀಮ್, ಇಮಿಕ್ವಿಮೋಡ್' 
+            },
+            Atopic_Dermatitis: {
+                ಹೆಸರು: 'ಅಟೋಪಿಕ್ ಡರ್ಮಟೈಟಿಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಶುಷ್ಕ, ತುರಿಕೆ ಮತ್ತು ಸ್ಕೇಲ್ ಚರ್ಮ <br>-ಕೆಂಪಾಗುವಿಕೆ ಮತ್ತು ಉರಿಯೂತ <br>-ಒರಟು ಮತ್ತು ದಪ್ಪ ಚರ್ಮದ ತೇಪೆಗಳು', 
+                ಕಾರಣಗಳು: '<br>-ಅಲರ್ಜಿನ್ ಒಡ್ಡುವಿಕೆ ಅಥವಾ ಆಹಾರ ಅಲರ್ಜಿಗಳು <br>-ಕೆಲವು ವಸ್ತುಗಳಿಗೆ ಚರ್ಮದ ಪ್ರತಿಕ್ರಿಯೆ <br>-ಹಾರ್ಮೋನುಗಳ ಬದಲಾವಣೆಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮವನ್ನು ನಿಯಮಿತವಾಗಿ ಮಾಯಿಶ್ಚರೈಸಿಂಗ್ ಮಾಡುವುದು <br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸುತ್ತದೆ: ಪ್ರೆಡ್ನಿಸೋನ್ ನಂತಹ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ ಗಳು, ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಹೈಡ್ರೋಕಾರ್ಟಿಸೋನ್ <br>ಔಷಧಿಗಳು: ಸೆಟಿರಿಜೈನ್, ಡಿಫೆನ್ ಹೈಡ್ರಮೈನ್ ನಂತಹ ಆಂಟಿಹಿಸ್ಟಮೈನ್ ಗಳು' 
+            },
+            Bullous_Disease: {
+                ಹೆಸರು: 'ಬುಲಸ್ ಡಿಸೀಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಚರ್ಮದ ಮೇಲೆ ದ್ರವ ಗುಳ್ಳೆಗಳು <br>-ಕೆಂಪಾಗುವಿಕೆ ಮತ್ತು ಉರಿಯೂತ <br>-ತೆರೆದ ಹುಣ್ಣುಗಳು, ದಪ್ಪವಾದ, ಸ್ಕೇಲ್ ಅಥವಾ ಕ್ರಸ್ಟಿ ಚರ್ಮ', 
+                ಕಾರಣಗಳು: '<br>-ಆಟೋಇಮ್ಯೂನ್ ಅಸ್ವಸ್ಥತೆಗಳು <br>-ಸೋಂಕುಗಳು <br>-ಔಷಧಿಗಳಿಗೆ ಪ್ರತಿಕ್ರಿಯೆ <br>-ಆನುವಂಶಿಕ ಅಂಶಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಪ್ರೆಡ್ನಿಸೋನ್ ನಂತಹ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ ಗಳು, ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಹೈಡ್ರೋಕಾರ್ಟಿಸೋನ್ <br>ಔಷಧಿಗಳು: ಅಜಾಥಿಯೋಪ್ರೈನ್, ಮೆಥೊಟ್ರೆಕ್ಸೇಟ್ ನಂತಹ ರೋಗನಿರೋಧಕಗಳು' 
+            },
+            ಎಸ್ಜಿಮಾ: {
+                ಹೆಸರು: 'ಎಸ್ಜಿಮಾ',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಶುಷ್ಕ, ತುರಿಕೆ ಮತ್ತು ಸ್ಕೇಲ್ ಚರ್ಮ <br>-ಕೆಂಪಾಗುವಿಕೆ ಮತ್ತು ಉರಿಯೂತ <br>-ಒರಟು ಮತ್ತು ದಪ್ಪ ಚರ್ಮದ ತೇಪೆಗಳು', 
+                ಕಾರಣಗಳು: '<br>-ಅಲರ್ಜಿನ್ ಒಡ್ಡುವಿಕೆ ಅಥವಾ ಆಹಾರ ಅಲರ್ಜಿಗಳು <br>-ಕೆಲವು ವಸ್ತುಗಳಿಗೆ ಚರ್ಮದ ಪ್ರತಿಕ್ರಿಯೆ <br>-ಹಾರ್ಮೋನುಗಳ ಬದಲಾವಣೆಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಎಸ್ಜಿಮಾ ಸ್ನೇಹಿ ಮಾಯಿಶ್ಚರೈಸರ್ಗಳು, ಪೆಟ್ರೋಲಿಯಂ ಜೆಲ್ಲಿ, ಪರಿಹಾರ ಕ್ರೀಮ್ಗಳು' 
+            },
+            Hair_Loss_Alopecia_and_other_Hair_Diseases: {
+                ಹೆಸರು: 'ಕೂದಲು ಉದುರುವಿಕೆ ಅಲೋಪೆಸಿಯಾ ಅಥವಾ ಇತರ ಕೂದಲಿನ ಕಾಯಿಲೆಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಕೂದಲು ಉದುರುವಿಕೆ <br>- ಉಗುರು ನೋಟದಲ್ಲಿ ಬದಲಾವಣೆ', 
+                ಕಾರಣಗಳು: '<br>-ಆಟೋಇಮ್ಯೂನ್ ಅಥವಾ ಹಾರ್ಮೋನುಗಳ ಅಸ್ವಸ್ಥತೆಗಳು <br>-ಜೆನೆಟಿಕ್ಸ್ <br>-ಔಷಧಿಗಳಿಗೆ ಅಡ್ಡಪರಿಣಾಮ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಮಿನಾಕ್ಸಿಡಿಲ್ (ನೆತ್ತಿ), ಪ್ರೆಡ್ನಿಸೋನ್ ನಂತಹ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ ಗಳು, ಹೈಡ್ರೋಕಾರ್ಟಿಸೋನ್ <br>ಔಷಧಿಗಳು, ಪುರುಷರಿಗೆ ಮಾತ್ರ: ಫಿನಾಸ್ಟರೈಡ್' 
+            },
+            Herpes_HPV_and_other_STDs: {
+                ಹೆಸರು: 'ಹರ್ಪಿಸ್ ಅಥವಾ ಇತರ ಎಸ್ಟಿಡಿಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಸಣ್ಣ ಗುಳ್ಳೆಗಳು <br>-ಮೂತ್ರ ವಿಸರ್ಜನೆಯ ಸಮಯದಲ್ಲಿ ನೋವು <br>-ತುರಿಕೆ ಮತ್ತು ಉರಿ', 
+                ಕಾರಣಗಳು: '<br>ಪೀಡಿತ ವ್ಯಕ್ತಿಯೊಂದಿಗಿನ ಲೈಂಗಿಕ ಸಂಪರ್ಕ <br>-ಒತ್ತಡ, ಅನಾರೋಗ್ಯ ಅಥವಾ ಜ್ವರವು ಅದನ್ನು ಪ್ರಚೋದಿಸಬಹುದು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಆಂಟಿವೈರಲ್ ಕ್ರೀಮ್ಗಳು ಅಥವಾ ಮುಲಾಮುಗಳು <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಅಸಿಕ್ಲೋವಿರ್, ಫಾಮ್ಸಿಕ್ಲೋವಿರ್, ವಲಸಿಕ್ಲೋವಿರ್' 
+            },
+            Light_Diseases_and_Disorders_of_Pigmentation: {
+                ಹೆಸರು: 'ಬೆಳಕಿನ ರೋಗಗಳು ಅಥವಾ ವರ್ಣದ್ರವ್ಯದ ಅಸ್ವಸ್ಥತೆಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಚರ್ಮದ ಬಣ್ಣದಲ್ಲಿ ಬದಲಾವಣೆಗಳು <br>-ಕಲೆಗಳು ಅಥವಾ ತೇಪೆಗಳು <br>-ಅಸಮ ಚರ್ಮದ ಟೋನ್', 
+                ಕಾರಣಗಳು: '<br>-ಜೆನೆಟಿಕ್ಸ್ ಅಥವಾ ಅಂತರ್ಗತ ವೈದ್ಯಕೀಯ ಪರಿಸ್ಥಿತಿಗಳು <br>-ಸೂರ್ಯನ ಬೆಳಕಿಗೆ <br>ಒಡ್ಡಿಕೊಳ್ಳುವುದು -ಹಾರ್ಮೋನುಗಳ ಬದಲಾವಣೆಗಳು <br>-ಔಷಧಿಗಳ ಅಡ್ಡಪರಿಣಾಮ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ಗಳು, ಹೈಡ್ರೋಕ್ವಿನೋನ್, ರೆಟಿನಾಯ್ಡ್ಗಳು <br>ರಾಸಾಯನಿಕ ಸಿಪ್ಪೆಗಳನ್ನು ಮೇಲಿನ ಪದರವನ್ನು ಎಕ್ಸ್ಫೋಲಿಯೇಟ್ ಮಾಡಲು ಮತ್ತು ವರ್ಣದ್ರವ್ಯವನ್ನು ಕಡಿಮೆ ಮಾಡಲು ಬಳಸಬಹುದು' 
+            },
+            Lupus_and_other_Connective_Tissue_diseases: {
+                ಹೆಸರು: 'ಲೂಪಸ್ ಅಥವಾ ಇತರ ಸಂಪರ್ಕ ಅಂಗಾಂಶ ರೋಗಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಜ್ವರ, ಆಯಾಸ ಮತ್ತು ದೌರ್ಬಲ್ಯ <br>-ದದ್ದುಗಳು ಮತ್ತು ಉರಿಯೂತ <br>-ವಾಕರಿಕೆ ಮತ್ತು ವಾಂತಿ', 
+                ಕಾರಣಗಳು: '<br>-ಜೆನೆಟಿಕ್ಸ್ <br>-ಹಾರ್ಮೋನುಗಳ ಬದಲಾವಣೆಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಟ್ಯಾಕ್ರೊಲಿಮಸ್ ಮುಲಾಮು <br>ಔಷಧಿ: <br>ಆಸ್ಪಿರಿನ್, ಇಬುಪ್ರೊಫೇನ್ ನಂತಹ ಉರಿಯೂತ ನಿವಾರಕ <br>ಔಷಧಿಗಳು, ಪ್ರೆಡ್ನಿಸೋನ್ ನಂತಹ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ ಗಳು, ಹೈಡ್ರೋಕಾರ್ಟಿಸೋನ್ <br>\t-ಇಮ್ಯುನೊಸಪ್ರೆಸೆಂಟ್ ಗಳಾದ ಅಜಾಥಿಯೋಪ್ರೈನ್, ಸೈಕ್ಲೋಫಾಸ್ಫಾಮೈಡ್ <br>\t-ಬಯೋಲಾಜಿಕ್ಸ್' 
+            },
+            Melanoma_Skin_Cancer_Nevi_and_Moles: {
+                ಹೆಸರು: 'ಮೆಲನೋಮಾ, ನೆವಿ ಅಥವಾ ಮೋಲ್ಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಚರ್ಮದ ಮೇಲೆ ಹೊಸ ಅಸಾಮಾನ್ಯ ಬೆಳವಣಿಗೆ <br>-ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಮಚ್ಚೆಯ ನೋಟದಲ್ಲಿ ಬದಲಾವಣೆ <br>-ಗುಣವಾಗದ ಹುಣ್ಣು', 
+                ಕಾರಣಗಳು: '<br>ನಿಖರವಾದ ಕಾರಣ ತಿಳಿದಿಲ್ಲ, ಆದರೆ ವಿಕಿರಣಕ್ಕೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು ಅಪಾಯದ ಅಂಶವಾಗಿದೆ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಸಂಭಾವ್ಯ ಚರ್ಮದ ಕ್ಯಾನ್ಸರ್, ದಯವಿಟ್ಟು ಸಾಧ್ಯವಾದಷ್ಟು ಬೇಗ ಹತ್ತಿರದ ಚರ್ಮರೋಗ ತಜ್ಞರ ಬಳಿಗೆ ಹೋಗಿ'  
+            },
+            Nail_Fungus_and_other_Nail_Disease: {
+                ಹೆಸರು: 'ಉಗುರು ಶಿಲೀಂಧ್ರ ಅಥವಾ ಇತರ ಉಗುರು ರೋಗ',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ದಪ್ಪವಾದ, ಬಣ್ಣಬಣ್ಣದ ಅಥವಾ ಒಡೆಯುವ ಉಗುರುಗಳು <br>-ಹಳದಿ, ಕಂದು ಅಥವಾ ಬಿಳಿ ಬಣ್ಣ <br>- ಉಗುರಿನಿಂದ ಹೊರಹೊಮ್ಮುವ ಕೆಟ್ಟ ವಾಸನೆ <br>-ನೋವು ಮತ್ತು ಅಸ್ವಸ್ಥತೆ', 
+                ಕಾರಣಗಳು: '<br>ಪೀಡಿತ ವ್ಯಕ್ತಿಗಳೊಂದಿಗಿನ ಸಂಪರ್ಕ <br>-ಕಳಪೆ ನೈರ್ಮಲ್ಯ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಸಿಕ್ಲೋಪಿರಾಕ್ಸ್, ಅಮೋರೊಲ್ಫೈನ್ <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಇಟ್ರಾಕೊನಜೋಲ್, ಟೆರ್ಬಿನಾಫೈನ್' 
+            },
+            Poison_Ivy_and_other_Contact_Dermatitis: {
+                ಹೆಸರು: 'ಕಾಂಟ್ಯಾಕ್ಟ್ ಡರ್ಮಟೈಟಿಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>ಬದಲಾಗಬಹುದು ಮತ್ತು ಸಾಮಾನ್ಯವಾಗಿ ಒಳಗೊಂಡಿರಬಹುದು: <br>-ತುರಿಕೆ ದದ್ದು <br>- ಸಾಮಾನ್ಯಕ್ಕಿಂತ ಗಾಢವಾಗಿರುವ ಚರ್ಮದ ತೇಪೆಗಳು (ಹೈಪರ್ಪಿಗ್ಮೆಂಟೆಡ್) <br>- ಒಣಗಿದ, ಬಿರುಕುಗೊಂಡ, ಸ್ಕೇಲ್ ಚರ್ಮ <br>- ಉಬ್ಬುಗಳು ಮತ್ತು ಗುಳ್ಳೆಗಳು, ಕೆಲವೊಮ್ಮೆ ಸೋರುವಿಕೆ ಮತ್ತು ಕ್ರಸ್ಟಿಂಗ್ <br>- ಊತ, ಉರಿ ಅಥವಾ ಕೋಮಲತೆ', 
+                ಕಾರಣಗಳು: '<br>ವಸ್ತುವಿನೊಂದಿಗೆ ನೇರ ಸಂಪರ್ಕ ಅಥವಾ ಅದಕ್ಕೆ ಅಲರ್ಜಿಯ ಪ್ರತಿಕ್ರಿಯೆ <br>-ಸೌಂದರ್ಯವರ್ಧಕಗಳು, ಸುಗಂಧ ದ್ರವ್ಯಗಳು, ಆಭರಣಗಳು ಮತ್ತು ಸಸ್ಯಗಳಂತಹ ಅನೇಕ ವಸ್ತುಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಟಾಪಿಕಲ್ ಸ್ಟೀರಾಯ್ಡ್ಗಳು- ಕ್ಲೋಬೆಟಾಸೋಲ್ 0.05% ಅಥವಾ ಟ್ರೈಯಾಮ್ಸಿನೊಲೋನ್ 0.1% <br>-ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಮೌಖಿಕ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ಗಳು, ಅನಿಟಿಹಿಸ್ಟಮೈನ್ಗಳು, ಇಮ್ಯುನೊಸಪ್ರೆಸೆಂಟ್ ಔಷಧಿಗಳು'  
+            },
+            Psoriasis_Lichen_Planus_and_related_diseases: {
+                ಹೆಸರು: 'ಸೋರಿಯಾಸಿಸ್ ಕಲ್ಲುಹೂವು ಪ್ಲಾನಸ್ ಅಥವಾ ಸಂಬಂಧಿತ ರೋಗಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ತುರಿಕೆ, ಶುಷ್ಕತೆ, ಚಪ್ಪಟೆಯಾದ ಚರ್ಮ <br>-ಕೆಂಪಾಗುವಿಕೆ, ಊತ ಮತ್ತು ಸುಡುವ ಸಂವೇದನೆ', 
+                ಕಾರಣಗಳು: '<br>-ಕಿರಿಕಿರಿಯೊಂದಿಗೆ ಸಂಪರ್ಕ <br>-ಅಲರ್ಜಿಕಾರಕದೊಂದಿಗಿನ ಸಂಪರ್ಕ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಕೋಲ್ಡ್ ಕಂಪ್ರೆಸ್, ಕ್ಯಾಲಮೈನ್ <br>ಔಷಧಿಗಳು: ಸೆಟಿರಿಜೈನ್, ಡಿಫೆನ್ಹೈಡ್ರಮೈನ್ ನಂತಹ ಆಂಟಿಹಿಸ್ಟಮೈನ್ ಗಳು'  
+            },
+            Scabies_Lyme_Disease_and_other_Infestations_and_Bites: {
+                ಹೆಸರು: 'ಗಜ್ಜಿ ಲೈಮ್ ಕಾಯಿಲೆ ಅಥವಾ ಇತರ ಸೋಂಕುಗಳು ಅಥವಾ ಕಡಿತಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ತುರಿಕೆ ಮತ್ತು ದದ್ದುಗಳು', 
+                ಕಾರಣಗಳು: '<br>-ಪೀಡಿತ ವ್ಯಕ್ತಿಯೊಂದಿಗಿನ ಸಂಪರ್ಕ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಗುಳ್ಳೆಗಳು <br>ಅನ್ವಯಿಸಿದರೆ: ಪರ್ಮೆಥ್ರಿನ್ ಕ್ರೀಮ್ <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಐವರ್ಮೆಕ್ಟಿನ್ <br>ಲೈಮ್ ಕಾಯಿಲೆ <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: ಡಾಕ್ಸಿಸೈಕ್ಲಿನ್, ಅಮೋಕ್ಸಿಸಿಲಿನ್' 
+            },
+            Seborrheic_Keratoses_and_other_Benign_Tumors: {
+                ಹೆಸರು: 'ಸೆಬೊರ್ಹೆಕ್ ಕೆರಾಟೋಸ್ ಅಥವಾ ಇತರ ಹಾನಿಕಾರಕ ಗೆಡ್ಡೆಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಮೊಡವೆಯಂತಹ ಬೆಳವಣಿಗೆಗಳು <br>-ತುರಿಕೆ ಮತ್ತು ಕಿರಿಕಿರಿಗೆ ಕಾರಣವಾಗಬಹುದು', 
+                ಕಾರಣಗಳು: '<br>-ಜೆನೆಟಿಕ್ಸ್ <br>-ಸೂರ್ಯನಿಗೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು <br>-ಹಾರ್ಮೋನಲ್ ಬದಲಾವಣೆಗಳು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಇದು ಸಾಮಾನ್ಯವಾಗಿ ನಿರುಪದ್ರವಿ ಮತ್ತು ಚಿಕಿತ್ಸೆಯ ಅಗತ್ಯವಿಲ್ಲ, ಆದರೆ ತೊಂದರೆಗಳನ್ನು ಉಂಟುಮಾಡಿದರೆ ಚರ್ಮರೋಗ ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಿ'  
+            },
+            Systemic_Disease: {
+                ಹೆಸರು: 'ಸಿಸ್ಟಮಿಕ್ ಡಿಸೀಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>ರೋಗಲಕ್ಷಣಗಳು ರೋಗದಿಂದ ರೋಗಕ್ಕೆ ಬದಲಾಗುತ್ತವೆ', 
+                ಕಾರಣಗಳು: '<br>ರೋಗದ ಆಧಾರದ ಮೇಲೆ ಕಾರಣಗಳು ಬದಲಾಗುತ್ತವೆ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ವಿವಿಧ ರೋಗಗಳು, ತಜ್ಞರ ಅಭಿಪ್ರಾಯಕ್ಕಾಗಿ ಹತ್ತಿರದ ಚರ್ಮರೋಗ ತಜ್ಞರ ಬಳಿಗೆ ಹೋಗಿ'  
+            },
+            Tinea_Ringworm_Candidiasis_and_other_Fungal_Infections: {
+                ಹೆಸರು: 'ಟಿನಿಯಾ ರಿಂಗ್ ವರ್ಮ್ ಕೊರಿಡಿಯಾಸಿಸ್ ಅಥವಾ ಇತರ ಶಿಲೀಂಧ್ರ ಸೋಂಕುಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ತುರಿಕೆ, ಉರಿ ಮತ್ತು ಬಿರುಕು <br>-ಬಣ್ಣ ಬದಲಾಯಿಸುವುದು', 
+                ಕಾರಣಗಳು: '<br>ದುರ್ಬಲ ಪ್ರತಿರಕ್ಷಣಾ ವ್ಯವಸ್ಥೆ <br>-ಅತಿಯಾದ ಶಿಲೀಂಧ್ರಗಳಿಗೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಕ್ಲೋಟ್ರಿಮಜೋಲ್, ಮೈಕೊನಜೋಲ್, ಕೆಟೊಕೊನಜೋಲ್ <br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: <br>\t-ಟೆರ್ಬಿನಾಫೈನ್, ಫ್ಲುಕೊನಜೋಲ್ <br>\t-ಆಂಟಿಫಂಗಲ್ ಉತ್ಪನ್ನಗಳನ್ನು ಸಹ ಬಳಸಬೇಕು ತಜ್ಞರ <br>ಅಭಿಪ್ರಾಯಕ್ಕಾಗಿ ಚರ್ಮರೋಗ ತಜ್ಞರನ್ನು ಭೇಟಿ ಮಾಡಿ'  
+            },
+            Urticaria_Hives: {
+                ಹೆಸರು: 'ಉರ್ಟಿಕೇರಿಯಾ ಹೈವ್ಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಚರ್ಮದ ಮೇಲೆ ತುರಿಕೆ ಕೆಂಪು ಗುಳ್ಳೆಗಳು <br>-ಉರಿ ಅಥವಾ ಕುಟುಕುವ ಸಂವೇದನೆ <br>-ಬೆಚ್ಚಗಿನ ಚರ್ಮ', 
+                ಕಾರಣಗಳು:'<br>-ಆಹಾರಗಳು, ಔಷಧಿಗಳು ಅಥವಾ ಇತರ ವಸ್ತುಗಳಿಗೆ ಅಲರ್ಜಿಯ ಪ್ರತಿಕ್ರಿಯೆ n\-ತಾಪಮಾನ ಬದಲಾವಣೆಗಳು <br>-ಸೂರ್ಯನ ಬೆಳಕಿಗೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಕ್ಯಾಲಮೈನ್ <br>ಔಷಧಿಗಳು: ಸೆಟಿರಿಜೈನ್, ಡಿಫೆನ್ಹೈಡ್ರಮೈನ್ ನಂತಹ ಆಂಟಿಹಿಸ್ಟಮೈನ್ ಗಳು' 
+            },
+            Vascular_Tumors: {
+                ಹೆಸರು: 'ನಾಳೀಯ ಗೆಡ್ಡೆಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಪೀಡಿತ ಪ್ರದೇಶದಲ್ಲಿ ಊತ ಅಥವಾ ಉಂಡೆಗಳು <br>-ಪೀಡಿತ ಪ್ರದೇಶದಲ್ಲಿ ಕೆಂಪಾಗುವುದು ಅಥವಾ ಬಣ್ಣ ಬದಲಾಯಿಸುವುದು <br>-ರಕ್ತಸ್ರಾವ ಅಥವಾ ಹುಣ್ಣು', 
+                ಕಾರಣಗಳು: '<br>-ಆನುವಂಶಿಕ ರೂಪಾಂತರಗಳು <br>-ಅಸಹಜ ರಕ್ತನಾಳಗಳ ಬೆಳವಣಿಗೆ <br>- ಕೆಲವು ರಾಸಾಯನಿಕಗಳು ಅಥವಾ ವಿಕಿರಣಕ್ಕೆ ಒಡ್ಡಿಕೊಳ್ಳುವುದು', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಇಲ್ಲಿ ಸಂಭವನೀಯ ಪರಿಹಾರಗಳು ಗೆಡ್ಡೆಯ ವಿಧ, ಗಾತ್ರ ಮತ್ತು ಸ್ಥಳವನ್ನು ಅವಲಂಬಿಸಿರುತ್ತದೆ.<br>ತಜ್ಞರ ಅಭಿಪ್ರಾಯಕ್ಕಾಗಿ ಹತ್ತಿರದ ಚರ್ಮರೋಗ ತಜ್ಞರನ್ನು ಭೇಟಿ ಮಾಡಿ'
+            },
+            ವಾಸ್ಕುಲೈಟಿಸ್: {
+                ಹೆಸರು: 'ವಾಸ್ಕುಲೈಟಿಸ್',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಜ್ವರ ಮತ್ತು ಆಯಾಸ <br>- ತೂಕ ನಷ್ಟ <br>-ದದ್ದುಗಳು <br>- ದೃಷ್ಟಿ ಬದಲಾವಣೆ <br>- ಕಿಬ್ಬೊಟ್ಟೆ ನೋವು', 
+                ಕಾರಣಗಳು: '<br>ಸಂಭವನೀಯ ಕಾರಣವೆಂದರೆ ಅಸಹಜ ಪ್ರತಿರಕ್ಷಣಾ ವ್ಯವಸ್ಥೆಯ ಪ್ರತಿಕ್ರಿಯೆ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ತೆಗೆದುಕೊಳ್ಳಬೇಕಾದ ಔಷಧಿಗಳು: <br>-ಕೊಲ್ಚಿಸಿನ್, ಪ್ರೆಡ್ನಿಸೋನ್ ನಂತಹ ಕಾರ್ಟಿಕೊಸ್ಟೆರಾಯ್ಡ್ ಗಳು, ಹೈಡ್ರೋಕಾರ್ಟಿಸೋನ್ <br>- ಅಜಾಥಿಯೋಪ್ರೈನ್ ನಂತಹ ರೋಗನಿರೋಧಕಗಳು, ಸೈಕ್ಲೋಫಾಸ್ಫಾಮೈಡ್ <br>- ರಿಟುಕ್ಸಿಮ್ಯಾಬ್, ಟೋಸಿಲಿಜುಮ್ಯಾಬ್ ನಂತಹ ಜೈವಿಕ ಏಜೆಂಟ್ ಗಳು' 
+            },
+            Warts_Molluscum_and_other_Viral_Infections: {
+                ಹೆಸರು: 'ಮೊಡವೆಗಳು, ಮೊಲ್ಲಸ್ಕಮ್ ಅಥವಾ ಇತರ ವೈರಲ್ ಸೋಂಕುಗಳು',
+                ರೋಗಲಕ್ಷಣಗಳು: '<br>-ಸಣ್ಣ, ಮಾಂಸಭರಿತ, ಧಾನ್ಯದ ಉಬ್ಬುಗಳು <br>-ಚರ್ಮವು ಸ್ಪರ್ಶಿಸಲು ಒರಟಾಗುತ್ತದೆ <br>-ಚರ್ಮದ ಮೇಲೆ ಕಪ್ಪು ಚುಕ್ಕೆಗಳು', 
+                ಕಾರಣಗಳು: '<br>-ಹ್ಯೂಮನ್ ಪ್ಯಾಪಿಲೋಮಾ ವೈರಸ್ (ಎಚ್ ಪಿವಿ) <br>ಸೋಂಕು -ಸಂಪರ್ಕ ಹರಡುವಿಕೆ', 
+                ಚಿಕಿತ್ಸೆಗಳು: '<br>ಚರ್ಮಕ್ಕೆ ಅನ್ವಯಿಸಿ: ಸ್ಯಾಲಿಸೈಕ್ಲಿಕ್ ಆಮ್ಲ, ಕ್ಯಾಂಥಾರಿಡಿನ್, ಇಮಿಕ್ವಿಮೋಡ್' 
+            }
+ };
+
+ const diseases_hindi = {
+
+    Acne_and_Rosacea: {
+                नाम: 'मुँहासे या Rosacea',
+                लक्षण:'<br>-चेहरे की <br>लालिमा-फ्लशिंग-जलन <br><br>-आंखों में सूखापन और जलन', 
+                कारण: '<br>कोई प्रत्यक्ष कारण नहीं पाया गया है, लेकिन शोध ने सबसे संभावित कारण की ओर इशारा किया है कि यह वंशानुगत है। कुछ ट्रिगर जो इसे बदतर बनाते हैं: <br>-सूरज की रोशनी <br>-तनाव <br>-गर्म या मसालेदार भोजन या पेय <br>-शराब और कैफीन <br>', 
+                उपचार:'<br>त्वचा पर लागू करें: एजेलेइक एसिड, मेट्रोनिडाज़ोल <br>दवाएं लेने के लिए: डॉक्सीसाइक्लिन, मिनोसाइक्लिन, एरिथ्रोमाइसिन' 
+            },
+            Actinic_Keratosis_Basal_Cell_Carcinoma_and_other_Malignant_Lesions: {
+                नाम: 'एक्टिनिक केराटोसिस या अन्य घातक घाव',
+                लक्षण:'<br>-त्वचा के खुरदरे, पपड़ीदार या पपड़ीदार पैच <br>-त्वचा पर मामूली धक्कों <br>-रंग भिन्नता-गुलाबी <br>या भूरा-खुजली<br>, जलन, रक्तस्राव या रिसना', 
+                कारण: '<br>-रसायनों या विकिरण के संपर्क <br>में -कमजोर प्रतिरक्षा प्रणाली <br>-आनुवंशिकता', 
+                उपचार: '<br>त्वचा पर लागू करें: 5-फ्लूरोरासिल (5-फू) क्रीम, इमिकिमॉड' 
+            },
+            Atopic_Dermatitis: {
+                नाम: 'एटोपिक जिल्द की सूजन',
+                लक्षण:'<br>-सूखी, खुजली और पपड़ीदार त्वचा <br>-लालिमा और सूजन <br>-त्वचा के खुरदरे और मोटे पैच', 
+                कारण:'<br>-एलर्जेन एक्सपोजर या खाद्य एलर्जी <br>-कुछ सामग्रियों के लिए त्वचा की प्रतिक्रिया <br>-हार्मोनल परिवर्तन', 
+                उपचार:'<br>त्वचा को नियमित रूप से मॉइस्चराइजिंग करना <br>त्वचा पर लागू करें: कॉर्टिकोस्टेरॉइड्स जैसे प्रेडनिसोन, हाइड्रोकार्टिसोन <br>लेने के लिए दवाएं: एंटीथिस्टेमाइंस जैसे सेटीरिज़िन, डिफेनहाइड्रामाइन' 
+            },
+            Bullous_Disease: {
+                नाम: 'बुलस डिजीज',
+                लक्षण:'<br>-त्वचा पर तरल पदार्थ के फफोले <br>-लालिमा और सूजन <br>-खुले घाव, मोटी, पपड़ीदार या पपड़ीदार त्वचा', 
+                कारण:'<br>-ऑटोइम्यून विकार <br>-संक्रमण <br>-दवा की प्रतिक्रिया <br>-आनुवंशिक कारक', 
+                उपचार: '<br>त्वचा पर लागू करें: कॉर्टिकोस्टेरॉइड्स जैसे प्रेडनिसोन, हाइड्रोकार्टिसोन <br>दवाएं लेने के लिए: इम्यूनोसप्रेसेन्ट्स जैसे एज़ैथियोप्रिन, मेथोट्रेक्सेट' 
+            },
+            एक्जिमा: {
+                नाम: 'एक्जिमा',
+                लक्षण:'<br>-सूखी, खुजली और पपड़ीदार त्वचा <br>-लालिमा और सूजन <br>-त्वचा के खुरदरे और मोटे पैच', 
+                कारण:'<br>-एलर्जेन एक्सपोजर या खाद्य एलर्जी <br>-कुछ सामग्रियों के लिए त्वचा की प्रतिक्रिया <br>-हार्मोनल परिवर्तन', 
+                उपचार: '<br>त्वचा पर लागू करें: एक्जिमा अनुकूल मॉइस्चराइज़र, पेट्रोलियम जेली, राहत क्रीम' 
+            },
+            Hair_Loss_Alopecia_and_other_Hair_Diseases: {
+                नाम: 'बालों के झड़ने खालित्य या अन्य बाल रोग',
+                लक्षण:'<br>-बालों का <br>झड़ना-नाखून की उपस्थिति में परिवर्तन', 
+                कारण:'<br>-ऑटोइम्यून या हार्मोनल विकार <br>-जेनेटिक्स <br>-दवा के लिए साइड इफेक्ट', 
+                उपचार: '<br>त्वचा पर लागू करें: मिनोक्सिडिल (खोपड़ी), कॉर्टिकोस्टेरॉइड्स जैसे प्रेडनिसोन, हाइड्रोकार्टिसोन <br>दवाएं लेने के लिए, केवल पुरुषों के लिए: Finasteride ' 
+            },
+            Herpes_HPV_and_other_STDs: {
+                नाम: 'हरपीज या अन्य एसटीडी',
+                लक्षण:'<br>-छोटे छाले <br>-मूत्र निर्वहन के दौरान दर्द <br>-खुजली और जलन', 
+                कारण: '<br>पीड़ित व्यक्ति के साथ यौन संपर्क <br>- तनाव, बीमारी या बुखार इसे ट्रिगर कर सकता है', 
+                उपचार:'<br>त्वचा पर लागू करें: एंटीवायरल क्रीम या मलहम <br>लेने के लिए दवाएं: एसाइक्लोविर, फैमिक्लोविर, वैलेसाइक्लोविर' 
+            },
+            Light_Diseases_and_Disorders_of_Pigmentation: {
+                नाम: 'प्रकाश रोग या रंजकता के विकार',
+                लक्षण:'<br>-त्वचा के रंग में परिवर्तन <br>-धब्बे या पैच <br>-असमान त्वचा टोन', 
+                कारण: '<br>-जेनेटिक्स या अंतर्निहित चिकित्सा स्थितियां <br>-सूर्य जोखिम <br>-हार्मोनल परिवर्तन <br>-दवाओं का साइड इफेक्ट', 
+                उपचार:'<br>त्वचा पर लागू करें: कॉर्टिकोस्टेरॉइड्स, हाइड्रोक्विनोन, रेटिनोइड्स <br>रासायनिक छिलके का उपयोग शीर्ष परत को एक्सफोलिएट करने और रंजकता को कम करने के लिए किया जा सकता है' 
+            },
+            Lupus_and_other_Connective_Tissue_diseases: {
+                नाम: 'ल्यूपस या अन्य संयोजी ऊतक रोग',
+                लक्षण:'<br>-बुखार, थकान और कमजोरी <br>-चकत्ते और सूजन <br>-मतली और उल्टी', 
+                कारण:'<br>-<br>आनुवंशिकी-हार्मोनल परिवर्तन', 
+                उपचार:'<br>त्वचा पर लागू करें: टैक्रोलिमस मरहम <br>लेने के लिए दवा: <br>\t-विरोधी भड़काऊ दवाएं जैसे एस्पिरिन, इबुप्रोफेन <br>\t-Corticosteroids जैसे प्रेडनिसोन, हाइड्रोकार्टिसोन <br>\t-इम्यूनोसप्रेसेन्ट्स जैसे एज़ैथियोप्रिन, साइक्लोफॉस्फेमाइड <br>\t-बायोलॉजिक्स' 
+            },
+            Melanoma_Skin_Cancer_Nevi_and_Moles: {
+                नाम: 'मेलेनोमा, नेवी या मोल्स',
+                लक्षण:'<br>-त्वचा पर नई असामान्य वृद्धि <br>-मौजूदा तिल की उपस्थिति में परिवर्तन <br>-एक घाव जो ठीक नहीं होता है', 
+                कारण: '<br>सटीक कारण ज्ञात नहीं है, लेकिन विकिरण के संपर्क में एक जोखिम कारक है', 
+                उपचार: '<br>संभावित त्वचा कैंसर, कृपया जल्द से जल्द निकटतम त्वचा विशेषज्ञ के पास जाएं'  
+            },
+            Nail_Fungus_and_other_Nail_Disease: {
+                नाम: 'नाखून कवक या अन्य नाखून रोग',
+                लक्षण:'<br>-मोटे, बदरंग या भंगुर नाखून <br>-पीले, भूरे या सफेद रंग का मलिनकिरण <br>-नाखून से निकलने वाली दुर्गंध <br>-दर्द और बेचैनी', 
+                कारण:'<br>-पीड़ित व्यक्तियों के साथ संपर्क <br>-खराब स्वच्छता', 
+                उपचार:'<br>त्वचा पर लागू करें: Ciclopirox, Amorolfine <br>दवाएं लेने के लिए: Itraconazole, Terbinafine' 
+            },
+            Poison_Ivy_and_other_Contact_Dermatitis: {
+                नाम: 'संपर्क जिल्द की सूजन',
+                लक्षण:'<br>अलग-अलग हो सकते हैं और आमतौर पर इसमें शामिल हो सकते हैं: <br>-खुजली वाले <br>दाने -चमड़े के पैच जो सामान्य से अधिक गहरे होते हैं (हाइपरपिग्मेंटेड) <br>-सूखी, फटी, पपड़ीदार त्वचा <br>-धक्कों और फफोले, कभी-कभी रिसने और क्रस्टिंग के साथ <br>-सूजन, जलन या कोमलता', 
+                कारण: '<br>किसी पदार्थ के साथ सीधा संपर्क या उससे एलर्जी की प्रतिक्रिया <br>- कई पदार्थ, जैसे सौंदर्य प्रसाधन, सुगंध, गहने और पौधे', 
+                उपचार:'<br>त्वचा पर लागू करें: सामयिक स्टेरॉयड- क्लोबेटासोल 0.05% या ट्रायमिसिनोलोन 0.1% <br>-लेने के लिए दवाएं: मौखिक कॉर्टिकोस्टेरॉइड्स, अनितिहिस्टामाइन, इम्यूनोसप्रेसेन्ट ड्रग्स'  
+            },
+            Psoriasis_Lichen_Planus_and_related_diseases: {
+                नाम: 'सोरायसिस लाइकेन प्लेनस या संबंधित रोग',
+                लक्षण:'<br>-खुजली, सूखापन, परतदार त्वचा <br>-लालिमा, सूजन और जलन', 
+                कारण:'<br>-अड़चन के साथ संपर्क <br>-एलर्जेन के साथ संपर्क', 
+                उपचार:'<br>त्वचा पर लागू करें: कोल्ड कंप्रेस, कैलामाइन <br>दवाएं लेने के लिए: एंटीथिस्टेमाइंस जैसे सेटीरिज़िन, डिफेनहाइड्रामाइन'  
+            },
+            Scabies_Lyme_Disease_and_other_Infestations_and_Bites: {
+                नाम: 'स्केबीज लाइम रोग या अन्य संक्रमण या काटने',
+                लक्षण:'<br>-खुजली और चकत्ते', 
+                कारण:'<br>-पीड़ित व्यक्ति के साथ संपर्क', 
+                उपचार:'<br>अगर खुजली <br>त्वचा पर लागू होती है: पर्मेथ्रिन क्रीम <br>लेने के लिए दवाएं: Ivermectin <br>अगर लाइम रोग <br>दवाएं लेने के लिए: डॉक्सीसाइक्लिन, एमोक्सिसिलिन' 
+            },
+            Seborrheic_Keratoses_and_other_Benign_Tumors: {
+                नाम: 'सेबोरहाइक केराटोस या अन्य सौम्य ट्यूमर',
+                लक्षण:'<br>-मस्से जैसी <br>वृद्धि-खुजली और जलन पैदा कर सकती है', 
+                कारण:'<br>-जेनेटिक्स <br>-एक्सपोजर टू <br>सन-हॉर्नमोनल चेंज', 
+                उपचार:'<br>यह आमतौर पर हानिरहित होता है और उपचार की आवश्यकता नहीं होती है, लेकिन परेशानी होने पर त्वचा विशेषज्ञ से संपर्क करें'  
+            },
+            Systemic_Disease: {
+                नाम: 'प्रणालीगत रोग',
+                लक्षण: '<br>लक्षण रोग से रोग में भिन्न होते हैं', 
+                कारण: '<br>कारण बीमारी के आधार पर भिन्न होते हैं', 
+                उपचार: '<br>रोगों की विविधता, विशेषज्ञ की राय के लिए निकटतम त्वचा विशेषज्ञ के पास जाएं'  
+            },
+            Tinea_Ringworm_Candidiasis_and_other_Fungal_Infections: {
+                नाम: 'टिनिया दाद कोरिडियासिस या अन्य फंगल संक्रमण',
+                लक्षण: '<br>-खुजली, जलन और क्रैकिंग <br>-मलिनकिरण', 
+                कारण:'<br>-कमजोर प्रतिरक्षा प्रणाली <br>-अत्यधिक कवक के संपर्क में', 
+                उपचार:'<br>त्वचा पर लागू करें: क्लोट्रिमेज़ोल, माइक्रोनाज़ोल, केटोकोनाज़ोल <br>लेने के लिए दवाएं: <br>\t-Terbinafine, Fluconazole <br>\t-एंटिफंगल उत्पादों का भी उपयोग किया जाना चाहिए <br>विशेषज्ञ की राय के लिए त्वचा विशेषज्ञ से मिलें'  
+            },
+            Urticaria_Hives: {
+                नाम: 'यूरिकेरिया पित्ती',
+                लक्षण:'<br>-त्वचा पर खुजली वाले लाल धक्कों <br>-जलन या चुभने वाली सनसनी <br>-गर्म त्वचा', 
+                कारण: '<br>-खाद्य पदार्थों, दवाओं या अन्य पदार्थों के लिए एलर्जी की प्रतिक्रिया n\-तापमान में <br>परिवर्तन-सूर्य के प्रकाश का जोखिम', 
+                उपचार:'<br>त्वचा पर लागू करें: कैलामाइन <br>दवाएं लेने के लिए: एंटीथिस्टेमाइंस जैसे सेटीरिज़िन, डिफेनहाइड्रामाइन' 
+            },
+            Vascular_Tumors: {
+                नाम: 'संवहनी ट्यूमर',
+                लक्षण: '<br>-प्रभावित क्षेत्र में सूजन या गांठ <br>-प्रभावित क्षेत्र में लालिमा या मलिनकिरण <br>-रक्तस्राव या अल्सर', 
+                कारण: '<br>-आनुवंशिक उत्परिवर्तन <br>-असामान्य रक्त वाहिका विकास <br>-कुछ रसायनों या विकिरण के संपर्क में', 
+                उपचार :'<br>संभावित उपचार ट्यूमर के प्रकार, आकार और स्थान पर निर्भर करते हैं।<br>विशेषज्ञ की राय के लिए निकटतम त्वचा विशेषज्ञ के पास जाएं'
+            },
+            वाहिकाशोथ: {
+                नाम: 'वास्कुलिटिस',
+                लक्षण:'<br>-बुखार और थकान <br>-वजन कम होना <br>-चकत्ते <br>-दृष्टि परिवर्तन <br>-पेट दर्द', 
+                कारण: '<br>संभावित कारण असामान्य प्रतिरक्षा प्रणाली प्रतिक्रिया है', 
+                उपचार:'<br>लेने के लिए दवाएं: <br>-कोल्चिसिन, प्रेडनिसोन जैसे कॉर्टिकोस्टेरॉइड्स, हाइड्रोकार्टिसोन-इम्यूनोसप्रेसेन्ट्स <br>जैसे एज़ैथियोप्रिन, साइक्लोफॉस्फेमाइड <br>-बायोलॉजिक एजेंट जैसे रीटुक्सिमैब, टोसिलिज़ुमाब' 
+            },
+            Warts_Molluscum_and_other_Viral_Infections: {
+                नाम: 'मौसा मोलस्कम या अन्य वायरल संक्रमण',
+                लक्षण:'<b>-छोटे, मांसल, दानेदार धक्कों <br>-त्वचा छूने के लिए खुरदरी हो जाती <br>है -त्वचा पर काले डॉट्स', 
+                कारण: '<br>-मानव पेपिलोमा वायरस (एचपीवी) के साथ संक्रमण <br>-संपर्क फैल रहा है', 
+                उपचार:'<br>त्वचा पर लागू करें: सैलिसाइक्लिक एसिड, कैंथरिडिन, इमिकिमॉड' 
+            }
+
+
+
+
+
+ };
+ function reformatJSON(inputJSON) {
+    const updatedJSON = {};
+
+    for (const disease in inputJSON) {
+        updatedJSON[disease] = {
+            name: inputJSON[disease].ಹೆಸರು || inputJSON[disease].name,
+            symptoms: inputJSON[disease].ರೋಗಲಕ್ಷಣಗಳು || inputJSON[disease].symptoms,
+            causes: inputJSON[disease].ಕಾರಣಗಳು || inputJSON[disease].causes,
+            treatments: inputJSON[disease].ಚಿಕಿತ್ಸೆಗಳು || inputJSON[disease].treatments,
+        };
+    }
+
+    return updatedJSON;
+}
+
+function lookupDiseaseInfo(diseaseName,languageName) {
+    const nameDiv = document.getElementById('name');
+    const symptomsDiv = document.getElementById('symptoms');
+    const causesDiv = document.getElementById('causes');
+    const treatmentsDiv = document.getElementById('treatments');
+  // check if the disease name exists in the diseases object
+  console.log(languageName);
+   const modifiedDiseaseName = diseaseName.replace(/\s+/g, '_');
+    if (modifiedDiseaseName in diseases && languageName == "en") {
+        const disease = diseases[modifiedDiseaseName];
+        // return the symptoms, causes, and treatments as an array
+        nameDiv.innerHTML = 'Name: ' + disease.name;
+        symptomsDiv.innerHTML = 'Symptoms: ' + disease.symptoms;
+        causesDiv.innerHTML = 'Causes: ' + disease.causes;
+        treatmentsDiv.innerHTML = 'Treatments: ' + disease.treatments;
+    }
+    if (modifiedDiseaseName in diseases && languageName == "es") {
+        const disease = diseases_kannada[modifiedDiseaseName];
+        // return the symptoms, causes, and treatments as an array
+        nameDiv.innerHTML = 'ಹೆಸರು (Name): ' + disease.ಹೆಸರು;
+        symptomsDiv.innerHTML = 'ರೋಗಲಕ್ಷಣಗಳು (Symptoms): ' + disease.ರೋಗಲಕ್ಷಣಗಳು;
+        causesDiv.innerHTML = 'ಕಾರಣಗಳು (Causes): ' + disease.ಕಾರಣಗಳು;
+        treatmentsDiv.innerHTML = 'ಚಿಕಿತ್ಸೆಗಳು (Treatments): ' + disease.ಚಿಕಿತ್ಸೆಗಳು;
+    }
+    if (modifiedDiseaseName in diseases && languageName == "hi") {
+        const disease = diseases_hindi[modifiedDiseaseName];
+        // return the symptoms, causes, and treatments as an array
+        nameDiv.innerHTML = 'नाम (Name): ' + disease.नाम;
+        symptomsDiv.innerHTML = 'लक्षण (Symptoms): ' + disease.लक्षण;
+        causesDiv.innerHTML = 'कारण (Causes): ' + disease.कारण;
+        treatmentsDiv.innerHTML = 'उपचार (Treatments): ' + disease.उपचार;
+    }
+}
+    </script>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+</body>
